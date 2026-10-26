@@ -5,6 +5,11 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import com.pedropathing.ivy.Command;
+import static com.pedropathing.ivy.commands.Commands.instant;
+
+import org.firstinspires.ftc.teamcode.Constants;
+
 public class Intake {
 
 
@@ -32,12 +37,32 @@ public class Intake {
     }
     public void  startintake(){
         intakeMotor.setPower(1.0);
+        setFlowerArm(Constants.FLOWER_ARM_UP);
     }
-    public void stopintake(){
+    public void startFlowerIntake(){
+        intakeMotor.setPower(1.0);
+        setFlowerArm(Constants.FLOWER_ARM_DOWN);
+    }
+    public void stopIntake(){
         intakeMotor.setPower(0);
+        setFlowerArm(Constants.FLOWER_ARM_UP);
     }
     public void setFlowerArm(double pos){
         leftFlowerArm.setPosition(pos);
         rightFlowerArm.setPosition(pos);
+    }
+
+    public Command startIntakeCommand(){
+        return instant(() -> startintake());
+    }
+    public Command startFlowerIntakeCommand(){
+        return instant(() -> startFlowerIntake());
+    }
+    public Command stopIntakeCommand(){
+        return instant(() -> stopIntake());
+    }
+
+    public void reverseIntake() {
+        intakeMotor.setPower(-1.0);
     }
 }

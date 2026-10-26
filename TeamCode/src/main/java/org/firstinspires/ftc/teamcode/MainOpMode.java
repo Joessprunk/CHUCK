@@ -14,8 +14,7 @@ public class MainOpMode extends OpMode {
     ArcadeDriveSys driveSys = new ArcadeDriveSys();
     Catipult catipult = new Catipult();
     Intake intake = new Intake();
-    ElapsedTime intakeShootTimer = new ElapsedTime();
-    ElapsedTime catapultShootTimer = new ElapsedTime();
+    //ElapsedTime catapultShootTimer = new ElapsedTime();
 
 
     boolean isShooting = false;
@@ -45,46 +44,52 @@ public class MainOpMode extends OpMode {
             driveSys.ResetPose();
         }
 
-//        if (gamepad1.a) {
-//            catipult.setArmPosition(-1.0);
-//        } else if (gamepad1.y) {
-//            catipult.setArmPosition(1.0);
-//        } else if (gamepad1.x) {
-//            catipult.setArmPosition(0.0);
-//        } else if (gamepad1.b) {
-//            catipult.setArmPosition(0.15);
+        if(gamepad1.right_bumper){
+            intake.startFlowerIntake();
+        } else if (gamepad1.right_trigger >= 0.3) {
+            intake.startintake();
+        } else if (gamepad1.left_trigger >= 0.5) {
+            intake.reverseIntake();
+        }else
+        {
+            intake.stopIntake();
+        }
+
+        // Operator Controls for comp setup
+
+        if(gamepad2.right_trigger >= 0.7){
+            catipult.shootCatipult();
+        }
+
+        if (gamepad2.a){
+            catipult.setCatipultState(Catipult.CatipultState.ONE_BALL);
+        } else if (gamepad2.b) {
+            catipult.setCatipultState(Catipult.CatipultState.HALF_FULL);
+        } else if (gamepad2.y) {
+            catipult.setCatipultState(Catipult.CatipultState.FULL);
+        }
+
+
+
+//
+//
+//        if(gamepad1.right_trigger >= 0.5){
+//            catipult.setPower(1.0);
+//            catapultShootTimer.reset();
+//        }else if(catapultShootTimer.seconds() < 0.35){
+//            catipult.setPower(1.0);
+//        }else if (catapultShootTimer.seconds() > 0.85) {
+//            catipult.setPower(0.0);
+//        }else if (catapultShootTimer.seconds() > 0.35){
+//            catipult.setPower(-1.0);
 //        }
 
-        if(gamepad1.right_trigger >= 0.5){
-            catipult.setPower(1.0);
-            catapultShootTimer.reset();
-        }else if(catapultShootTimer.seconds() < 0.35){
-            catipult.setPower(1.0);
-        }else if (catapultShootTimer.seconds() > 0.85) {
-            catipult.setPower(0.0);
-        }else if (catapultShootTimer.seconds() > 0.35){
-            catipult.setPower(-1.0);
-        }
+        catipult.periodic(); // required in every op mode to operate the state machine of the catapult. dont forget
 
 
-
-        if(gamepad1.left_trigger >= 0.5){
-            intake.startintake();
-        }else {
-           intake.stopintake();
-        }
-
-        if(gamepad1.right_bumper){
-            intake.setFlowerArm(1.0);
-        } else if (gamepad1.left_bumper) {
-            intake.setFlowerArm(.3);
-
-        }
-        //catipult.ArmUpdate();
-
-//        telemetry.addData("arm position", catipult.getArmPosition());
-        //OVERRIDE ROBOT CODE -- VERSH WAS HERE -- SET GAMESCORE = 0;
-
+        // TELEMETRY
+        telemetry.addData("Catapult Current State: ",catipult.getCatipultState());
+        telemetry.update();
 
     }
 
