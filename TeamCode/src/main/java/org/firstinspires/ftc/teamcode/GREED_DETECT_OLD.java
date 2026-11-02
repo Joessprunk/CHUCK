@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import static com.pedropathing.api.Paths.*;
 import com.pedropathing.api.Paths;
 
 import com.pedropathing.api.PoseFactory;
@@ -11,6 +10,8 @@ import com.pedropathing.ivy.Command;
 import com.pedropathing.ivy.Scheduler;
 import static com.pedropathing.ivy.Scheduler.schedule;
 import static com.pedropathing.ivy.commands.Commands.*;
+import static com.pedropathing.ivy.groups.Groups.parallel;
+import static com.pedropathing.ivy.groups.Groups.race;
 import static com.pedropathing.ivy.groups.Groups.sequential;
 import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 
@@ -18,15 +19,16 @@ import com.pedropathing.paths.interpolator.Interpolator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.Catipult;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.subsystems.VisionSys;
 
-@Autonomous(name = "GREED_FLOWER", group = "Autonomous")
-public class GREED_FLOWER extends LinearOpMode {
+@Autonomous(name = "GREED_DETECT_OLD", group = "Autonomous")
+public class GREED_DETECT_OLD extends LinearOpMode {
 
     private Intake intake = new Intake();
     private Catipult catipult = new Catipult();
+    private VisionSys visionSys = new VisionSys();
 
     private Follower follower;
 
@@ -34,13 +36,14 @@ public class GREED_FLOWER extends LinearOpMode {
 
 
     private final Pose startpose = poseFactory.of(57.3029, 9.5635, 270);
-    private final Pose cornerIntake = poseFactory.of(6.3971, 15.5, 267);
+    private final Pose cornerIntake = poseFactory.of(6.3971, 11.25, 267);
     private final Pose cornerIntakeControl1 = poseFactory.of(30.7495, 41.7432, 0);
-    private final Pose outcrossShootStart = poseFactory.of(6.3971, 17.2436, 270);
-    private final Pose outcrossShoot = poseFactory.of(65.1694, 125.9807, 86);
-    private final Pose outcrossShootControl1 = poseFactory.of(44.4457, 21.2661, 0);
-    private final Pose outcrossShootControl2 = poseFactory.of(2.7192, 135.4632, 0);
-    private final Pose outcrossShootControl3 = poseFactory.of(55.407, 86.2606, 0);
+    private final Pose cornerShootStart = poseFactory.of(6.3971, 15, 267);
+    private final Pose cornerShoot = poseFactory.of(57.6727, 9.4616, 270);
+    private final Pose cornerShootControl1 = poseFactory.of(30.488, 41.9705, 0);
+    private final Pose insideCornerShootStart = poseFactory.of(57.6727, 9.4616, 270);
+    private final Pose insideCornerShoot = poseFactory.of(65.1694, 125.9807, 86);
+    private final Pose insideCornerShootControl1 = poseFactory.of(68.9411, 75.4687, 0);
     private final Pose flwIntakeStart = poseFactory.of(65.1694, 125.9807, 90);
     private final Pose flwIntake = poseFactory.of(50.5506, 122.209, 90);
     private final Pose flwIntakeControl1 = poseFactory.of(52.639, 83.1769, 0);
@@ -61,8 +64,9 @@ public class GREED_FLOWER extends LinearOpMode {
     private final Pose flwShoot2Control2 = poseFactory.of(4.9761, 118.9678, 0);
     private final Pose flwShoot2Control3 = poseFactory.of(69.2284, 97.2965, 0);
     private final Pose parkStart = poseFactory.of(64.4816, 125.5737, 86);
-    private final Pose park = poseFactory.of(13.1556, 116.5018, 0);
+    private final Pose park = poseFactory.of(12.1133, 102.43, 0);
     private final Pose parkControl1 = poseFactory.of(49.4816, 99.2808, 0);
+
 
 
 
@@ -72,34 +76,75 @@ public class GREED_FLOWER extends LinearOpMode {
                 intake.stopIntakeCommand(),
                 catipult.shootCommand(),
                 waitMs(750),
-                intake.startFlowerIntakeCommand(),
-                follow(follower, cornerIntake()),
-                waitMs(1250),
                 intake.startIntakeCommand(),
-                follow(follower, outcrossShoot()),
-                intake.stopIntakeCommand(),
-                waitMs(1000),
-                catipult.shootCommand(),
+                race(
+                        sequential(
+                            follow(follower, cornerIntake()),
+                            waitMs(1000)),
+                        waitMs(4000)
+                        ),
+                parallel(follow(follower, cornerShoot()),
+                        sequential(waitMs(1000),
+                                intake.stopIntakeCommand())),
                 waitMs(750),
-                intake.startFlowerIntakeCommand(),
-                follow(follower, flwIntake()),
+                conditional( () -> ( visionSys.seesTag(34) || visionSys.seesTag(35) || visionSys.seesTag(36) || visionSys.seesTag(37) ),
+                       sequential(
+                               catipult.shootCommand(),
+                               waitMs(750),
+                               follow(follower, insideCornerShoot())
+                               ),
+                        sequential(
+                                follow(follower, insideCornerShoot()),
+                                waitMs(500),
+                                catipult.shootCommand(),
+                                waitMs(750)
+                        )
+
+                        ),
+                parallel(
+                        follow(follower, flwIntake()),
+                        sequential(
+                                waitMs(300),
+                                intake.startFlowerIntakeCommand())),
                 waitMs(1500),
-                intake.startIntakeCommand(),
-                follow(follower, flwShoot()),
-                intake.stopIntakeCommand(),
-                waitMs(100),
+                parallel(
+                        follow(follower, flwShoot()),
+                        sequential(
+                                waitMs(300),
+                                intake.startIntakeCommand(),
+                                waitMs(750),
+                                intake.stopIntakeCommand()
+                        )),
+                waitMs(500),
                 catipult.shootCommand(),
                 waitMs(750),
-                intake.startFlowerIntakeCommand(),
-                follow(follower, flwIntake2()),
+                parallel(
+                        follow(follower, flwIntake2()),
+                        sequential(
+                                waitMs(1000),
+                                intake.startFlowerIntakeCommand()
+                                )
+                ),
                 waitMs(1500),
-                intake.startIntakeCommand(),
-                follow(follower, flwShoot2()),
+                parallel(
+                        follow(follower, flwShoot2()),
+                        sequential(
+                                waitMs(500),
+                                intake.startIntakeCommand(),
+                                waitMs(500),
+                                intake.stopIntakeCommand()
+                                )
+                        ),
                 waitMs(1000),
-                catipult.shootCommand(),
-                waitMs(750),
+                conditional(()-> (visionSys.seesTag(31) || visionSys.seesTag(32)),
+                        sequential(
+                                catipult.shootCommand(),
+                                waitMs(750)),
+                        intake.stopIntakeCommand()
+                        ),
                 follow(follower, park()),
                 intake.stopIntakeCommand()
+
 
         );
     }
@@ -109,6 +154,7 @@ public class GREED_FLOWER extends LinearOpMode {
 
         catipult.init(hardwareMap);
         intake.init(hardwareMap);
+        visionSys.init(hardwareMap);
 
         Scheduler.reset();
         follower = org.firstinspires.ftc.teamcode.pedro.Constants.create(hardwareMap);
@@ -133,6 +179,8 @@ public class GREED_FLOWER extends LinearOpMode {
             }
 
             telemetry.update();
+            visionSys.periodic();
+
         }
     }
 
@@ -140,8 +188,12 @@ public class GREED_FLOWER extends LinearOpMode {
         return Paths.curve(startpose, cornerIntakeControl1, cornerIntake).linear(startpose, cornerIntake);
     }
 
-    public Path outcrossShoot() {
-        return Paths.curve(outcrossShootStart, outcrossShootControl1, outcrossShootControl2, outcrossShootControl3, outcrossShoot).linear(outcrossShootStart, outcrossShoot);
+    public Path cornerShoot() {
+        return Paths.curve(cornerShootStart, cornerShootControl1, cornerShoot).linear(cornerShootStart, cornerShoot);
+    }
+
+    public Path insideCornerShoot() {
+        return Paths.curve(insideCornerShootStart, insideCornerShootControl1, insideCornerShoot).linear(insideCornerShootStart, insideCornerShoot);
     }
 
     public Path flwIntake() {

@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import static com.pedropathing.api.Paths.*;
 import com.pedropathing.api.Paths;
 
 import com.pedropathing.api.PoseFactory;
@@ -18,12 +17,11 @@ import com.pedropathing.paths.interpolator.Interpolator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.Catipult;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 
-@Autonomous(name = "RED_GREED", group = "Autonomous")
-public class RED_GREED extends LinearOpMode {
+@Autonomous(name = "GREED", group = "Autonomous")
+public class GREED extends LinearOpMode {
 
     private Intake intake = new Intake();
     private Catipult catipult = new Catipult();
@@ -99,6 +97,7 @@ public class RED_GREED extends LinearOpMode {
                 waitMs(750),
                 follow(follower, park()),
                 intake.stopIntakeCommand()
+
 
         );
     }

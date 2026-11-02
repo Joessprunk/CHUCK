@@ -36,11 +36,11 @@ public class Intake {
 
     }
     public void  startintake(){
-        intakeMotor.setPower(1.0);
+        intakeMotor.setPower(0.75);
         setFlowerArm(Constants.FLOWER_ARM_UP);
     }
     public void startFlowerIntake(){
-        intakeMotor.setPower(1.0);
+        intakeMotor.setPower(0.75);
         setFlowerArm(Constants.FLOWER_ARM_DOWN);
     }
     public void stopIntake(){
@@ -60,6 +60,9 @@ public class Intake {
     }
     public Command stopIntakeCommand(){
         return instant(() -> stopIntake());
+    }
+    public Command reverseIntakeCommand(){
+        return instant(() -> reverseIntake());
     }
 
     public void reverseIntake() {
