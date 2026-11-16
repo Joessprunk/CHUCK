@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.subsystems.ArcadeDriveSys;
 import org.firstinspires.ftc.teamcode.subsystems.Catipult;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.subsystems.LightSys;
 import org.firstinspires.ftc.teamcode.subsystems.VisionSys;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
@@ -21,6 +22,7 @@ public class SoloOpMode extends OpMode {
     Catipult catipult = new Catipult();
     Intake intake = new Intake();
     VisionSys visionSys = new VisionSys();
+    LightSys lightSys = new LightSys();
     //ElapsedTime catapultShootTimer = new ElapsedTime();
 
     TelemetryManager panelsTelemetry;
@@ -34,6 +36,7 @@ public class SoloOpMode extends OpMode {
         driveSys.init(hardwareMap);
         catipult.init(hardwareMap);
         visionSys.init(hardwareMap);
+        lightSys.init(hardwareMap);
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
     }
 
@@ -109,25 +112,12 @@ public class SoloOpMode extends OpMode {
 
 
 
-//
-//
-//        if(gamepad1.right_trigger >= 0.5){
-//            catipult.setPower(1.0);
-//            catapultShootTimer.reset();
-//        }else if(catapultShootTimer.seconds() < 0.35){
-//            catipult.setPower(1.0);
-//        }else if (catapultShootTimer.seconds() > 0.85) {
-//            catipult.setPower(0.0);
-//        }else if (catapultShootTimer.seconds() > 0.35){
-//            catipult.setPower(-1.0);
-//        }
+        lightSys.updateLights();
         visionSys.periodic();
         catipult.periodic(); // required in every op mode to operate the state machine of the catapult. dont forget
 
 
         // TELEMETRY
-//        telemetry.addData("Catapult Current State: ",catipult.getCatipultState());
-//        telemetry.update();
 
         panelsTelemetry.addData("Robot Yaw", driveSys.getYaw());
 
@@ -137,14 +127,6 @@ public class SoloOpMode extends OpMode {
         panelsTelemetry.addData("Vision Mode",
                 visionSys.getCurrentMode());
 
-        panelsTelemetry.addData("AprilTag 35 Visible",
-                visionSys.seesTag(35));
-
-        panelsTelemetry.addData("AprilTag 36 Visible",
-                visionSys.seesTag(36));
-
-        panelsTelemetry.addData("Game Piece Visible",
-                visionSys.seesGamePiece());
 
 // Update Panels and Driver Station
         panelsTelemetry.update(telemetry);

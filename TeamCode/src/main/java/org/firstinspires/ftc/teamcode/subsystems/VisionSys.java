@@ -191,54 +191,6 @@ public class VisionSys {
         }
     }
 
-    // Aim between two specific AprilTags
-    public double getTargetRotation(int tag1, int tag2) {
-
-        if (currentMode != VisionMode.APRIL_TAGS || !hasValidResult()) {
-            return 0.0;
-        }
-
-        List<LLResultTypes.FiducialResult> tags =
-                latestResult.getFiducialResults();
-
-        if (tags == null) {
-            return 0.0;
-        }
-
-        double tx1 = Double.NaN;
-        double tx2 = Double.NaN;
-
-        // Find both target tags
-        for (LLResultTypes.FiducialResult tag : tags) {
-
-            if (tag.getFiducialId() == tag1) {
-                tx1 = tag.getTargetXDegrees();
-            }
-
-            if (tag.getFiducialId() == tag2) {
-                tx2 = tag.getTargetXDegrees();
-            }
-        }
-
-        // Require both tags to be visible
-        if (Double.isNaN(tx1) || Double.isNaN(tx2)) {
-            return 0.0;
-        }
-
-        // Calculate midpoint between the two tags
-        double tx = (tx1 + tx2) / 2.0;
-
-        // Deadband
-        if (Math.abs(tx) < 1.0) {
-            return 0.0;
-        }
-
-        // Proportional rotation
-        double rotation = -0.025 * tx;
-
-        // Limit rotation speed
-        return Math.max(-0.5, Math.min(0.5, rotation));
-    }
 
     public double getTagAimRotation(int targetId) {
 
@@ -257,7 +209,7 @@ public class VisionSys {
 
             if (tag.getFiducialId() == targetId) {
 
-                double tx = tag.getTargetXDegrees();
+                double tx = tag.getTargetXDegrees() -5.0; // -6.0
 
                 // Deadband
                 if (Math.abs(tx) < 1.0) {
@@ -273,10 +225,53 @@ public class VisionSys {
         }
         return 0.0;
     }
-//    public boolean seesTagCommand(int tag){
+
+    public boolean isTagOnTarget(int targetId) {
+
+        if (currentMode != VisionMode.APRIL_TAGS || !hasValidResult()) {
+            return false;
+        }
+
+        List<LLResultTypes.FiducialResult> tags =
+                latestResult.getFiducialResults();
+
+        if (tags == null) {
+            return false;
+        }
+
+        for (LLResultTypes.FiducialResult tag : tags) {
+
+            if (tag.getFiducialId() == targetId) {
+
+                double tx = tag.getTargetXDegrees();
+
+                return Math.abs(tx) < 2.0;
+            }
+        }
+
+        return false;
+    }
+
+    //    public boolean seesTagCommand(int tag){
 //        return instant(() -> seesTag(tag));
 //    }
+    public Command seesTagCommand(int goalTag) {
+
+       return Command.build()
+                .setStart(() -> {
+                    // executed on start
+                })
+                .setExecute(() -> {
+                    // executed on execute
+                })
+                .setDone(() -> {
+                    return seesTag(goalTag);
+                })
+                .setEnd(endCondition -> {
+                    // executed on end
+                })
+                .requiring();
 
 
+    }
 }
-

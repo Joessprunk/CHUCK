@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.subsystems.ArcadeDriveSys;
 import org.firstinspires.ftc.teamcode.subsystems.Catipult;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.subsystems.LightSys;
 import org.firstinspires.ftc.teamcode.subsystems.VisionSys;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
@@ -21,6 +22,7 @@ public class BlueOpMode extends OpMode {
     Catipult catipult = new Catipult();
     Intake intake = new Intake();
     VisionSys visionSys = new VisionSys();
+    LightSys lightSys = new LightSys();
     //ElapsedTime catapultShootTimer = new ElapsedTime();
 
     TelemetryManager panelsTelemetry;
@@ -34,6 +36,7 @@ public class BlueOpMode extends OpMode {
         driveSys.init(hardwareMap);
         catipult.init(hardwareMap);
         visionSys.init(hardwareMap);
+        lightSys.init(hardwareMap);
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
     }
 
@@ -43,12 +46,12 @@ public class BlueOpMode extends OpMode {
 
         telemetry.addData("robotYaw", driveSys.getYaw());
 
-        if(gamepad1.a){
+        if(gamepad1.left_bumper){
             if (visionSys.seesTag(40)) {
                 rotate = visionSys.getTagAimRotation(40);
             }
-            else if (visionSys.seesTag(43)) {
-                rotate = visionSys.getTagAimRotation(43);
+            else if (visionSys.seesTag(44)) {
+                rotate = visionSys.getTagAimRotation(44);
             }
             else {
                 rotate = 0.0;
@@ -109,25 +112,34 @@ public class BlueOpMode extends OpMode {
 
 
 
-//
-//
-//        if(gamepad1.right_trigger >= 0.5){
-//            catipult.setPower(1.0);
-//            catapultShootTimer.reset();
-//        }else if(catapultShootTimer.seconds() < 0.35){
-//            catipult.setPower(1.0);
-//        }else if (catapultShootTimer.seconds() > 0.85) {
-//            catipult.setPower(0.0);
-//        }else if (catapultShootTimer.seconds() > 0.35){
-//            catipult.setPower(-1.0);
-//        }
+        if (gamepad1.left_bumper && !(visionSys.isTagOnTarget(40) || visionSys.isTagOnTarget(43))) {
+            lightSys.setLightState(LightSys.LightState.aiming);
+        } else if (gamepad1.left_bumper && (visionSys.isTagOnTarget(40) || visionSys.isTagOnTarget(43))) {
+            lightSys.setLightState(LightSys.LightState.on_target);
+        } else if((catipult.getCatapultState() == Catipult.CatipultState.FULL) && (gamepad1.right_trigger > 0.5 || gamepad1.right_bumper)){
+            lightSys.setLightState(LightSys.LightState.FULL_intaking);
+        }else if((catipult.getCatapultState() == Catipult.CatipultState.HALF_FULL) && (gamepad1.right_trigger > 0.5 || gamepad1.right_bumper)){
+            lightSys.setLightState(LightSys.LightState.MID_intaking);
+        }else if((catipult.getCatapultState() == Catipult.CatipultState.ONE_BALL) && (gamepad1.right_trigger > 0.5 || gamepad1.right_bumper)){
+            lightSys.setLightState(LightSys.LightState.LOW_intaking);
+        }else if(catipult.getCatapultState() == Catipult.CatipultState.FULL){
+            lightSys.setLightState(LightSys.LightState.FULL_POWER);
+        }else if(catipult.getCatapultState() == Catipult.CatipultState.HALF_FULL){
+            lightSys.setLightState(LightSys.LightState.MID_POWER);
+        }else if(catipult.getCatapultState() == Catipult.CatipultState.ONE_BALL){
+            lightSys.setLightState(LightSys.LightState.LOW_POWER);
+        }else {
+            lightSys.setLightState(LightSys.LightState.MID_intaking);
+        }
+
+
+        lightSys.updateLights();
         visionSys.periodic();
         catipult.periodic(); // required in every op mode to operate the state machine of the catapult. dont forget
 
 
         // TELEMETRY
-//        telemetry.addData("Catapult Current State: ",catipult.getCatipultState());
-//        telemetry.update();
+
 
         panelsTelemetry.addData("Robot Yaw", driveSys.getYaw());
 
@@ -137,16 +149,7 @@ public class BlueOpMode extends OpMode {
         panelsTelemetry.addData("Vision Mode",
                 visionSys.getCurrentMode());
 
-//        panelsTelemetry.addData("AprilTag 35 Visible",
-//                visionSys.seesTag(35));
-//
-//        panelsTelemetry.addData("AprilTag 36 Visible",
-//                visionSys.seesTag(36));
-////
-//        panelsTelemetry.addData("Game Piece Visible",
-//                visionSys.seesGamePiece());
 
-// Update Panels and Driver Station
         panelsTelemetry.update(telemetry);
 
     }

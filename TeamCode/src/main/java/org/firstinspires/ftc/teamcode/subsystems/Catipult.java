@@ -83,6 +83,9 @@ public class Catipult {
     public void setCatipultState(CatipultState targetState){
         catipultState = targetState;
     }
+    public CatipultState getCatapultState(){
+        return catipultState;
+    }
 
     public CatipultState getCatipultState() {
         return catipultState;
