@@ -36,11 +36,11 @@ public class Intake {
 
     }
     public void  startintake(){
-        intakeMotor.setPower(0.75);
+        intakeMotor.setPower(0.82);
         setFlowerArm(Constants.FLOWER_ARM_UP);
     }
     public void startFlowerIntake(){
-        intakeMotor.setPower(0.75);
+        intakeMotor.setPower(0.82);
         setFlowerArm(Constants.FLOWER_ARM_DOWN);
     }
     public void stopIntake(){
