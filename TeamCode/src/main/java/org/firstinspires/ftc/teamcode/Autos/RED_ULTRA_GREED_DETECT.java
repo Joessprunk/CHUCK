@@ -34,40 +34,31 @@ public class RED_ULTRA_GREED_DETECT extends LinearOpMode {
 
     private final PoseFactory poseFactory = PoseFactory.degrees();
 
-
     private final Pose startpose = poseFactory.of(57.3029, 9.5635, 270);
-    private final Pose cornerIntake = poseFactory.of(7, 11, 267);
+    private final Pose cornerIntake = poseFactory.of(7, 16, 267);
     private final Pose cornerIntakeControl1 = poseFactory.of(30.7495, 41.7432, 0);
-    private final Pose cornerShootStart = poseFactory.of(7, 17, 267);
+    private final Pose cornerShootStart = poseFactory.of(7, 16, 267);
     private final Pose cornerShoot = poseFactory.of(57.6727, 9.4616, 270);
     private final Pose cornerShootControl1 = poseFactory.of(30.488, 41.9705, 0);
     private final Pose insideCornerShootStart = poseFactory.of(57.6727, 9.4616, 270);
-    private final Pose insideCornerShoot = poseFactory.of(63.0793, 126.5032, 86);
-    private final Pose insideCornerShootControl1 = poseFactory.of(45.4274, 32.2036, 0);
-    private final Pose insideCornerShootControl2 = poseFactory.of(87.2735, 52.7332, 0);
-    private final Pose insideCornerShootControl3 = poseFactory.of(43.1017, 108.4445, 0);
-    private final Pose flwIntakeStart = poseFactory.of(63.0793, 126.5032, 90);
+    private final Pose insideCornerShoot = poseFactory.of(65.1694, 125.9807, 86);
+    private final Pose insideCornerShootControl1 = poseFactory.of(49.9211, 23.5296, 0);
+    private final Pose insideCornerShootControl2 = poseFactory.of(71.9898, 66.0542, 0);
+    private final Pose insideCornerShootControl3 = poseFactory.of(50.1517, 106.0538, 0);
+    private final Pose flwIntakeStart = poseFactory.of(65.1694, 125.9807, 90);
     private final Pose flwIntake = poseFactory.of(50.5506, 122.209, 90);
     private final Pose flwIntakeControl1 = poseFactory.of(52.639, 83.1769, 0);
     private final Pose flwShootStart = poseFactory.of(50.5506, 122.209, 90);
-    private final Pose flwShoot = poseFactory.of(63.5682, 126.2905, 86);
+    private final Pose flwShoot = poseFactory.of(64.4042, 126.395, 86);
     private final Pose flwShootControl1 = poseFactory.of(54.9512, 76.9512, 0);
-    private final Pose flwIntake2 = poseFactory.of(15.5727, 46.7357, 180);
+    private final Pose flwIntake2 = poseFactory.of(16, 46.7357, 180);
     private final Pose flwIntake2Control1 = poseFactory.of(68.9512, 97.616, 0);
-    private final Pose flwIntake2Control2 = poseFactory.of(5.0184, 119.4797, 0);
+    private final Pose flwIntake2Control2 = poseFactory.of(5.8002, 118.9586, 0);
     private final Pose flwIntake2Control3 = poseFactory.of(63.8692, 56.2505, 0);
-    private final Pose flwIntake2Segment1Start = poseFactory.of(15.5727, 46.7357, 86);
-    private final Pose flwIntake2Segment1End = poseFactory.of(15.5727, 46.7357, 178);
-    private final Pose flwIntake2Segment2Start = poseFactory.of(15.5727, 46.7357, 178);
-    private final Pose flwIntake2Segment2End = poseFactory.of(15.5727, 46.7357, 180);
-    private final Pose flwShoot2Start = poseFactory.of(15.5727, 46.7357, 180);
-    private final Pose flwShoot2 = poseFactory.of(64.4816, 125.5737, 86);
-    private final Pose flwShoot2Control1 = poseFactory.of(64.3683, 55.8536, 0);
-    private final Pose flwShoot2Control2 = poseFactory.of(4.9761, 118.9678, 0);
-    private final Pose flwShoot2Control3 = poseFactory.of(69.2284, 97.2965, 0);
-    private final Pose parkStart = poseFactory.of(64.4816, 125.5737, 86);
-    private final Pose park = poseFactory.of(12.1133, 89.0, 0);
-    private final Pose parkControl1 = poseFactory.of(49.4816, 99.2808, 0);
+    private final Pose flwIntake2Segment1Start = poseFactory.of(16, 46.7357, 86);
+    private final Pose flwIntake2Segment1End = poseFactory.of(16, 46.7357, 178);
+    private final Pose flwIntake2Segment2Start = poseFactory.of(16, 46.7357, 178);
+    private final Pose flwIntake2Segment2End = poseFactory.of(16, 46.7357, 180);
     private final Pose flwShoot25 = poseFactory.of(57.4457, 9.0902, -90);
     private final Pose flwShoot25Control1 = poseFactory.of(41.0847, 39.7063, 0);
     private final Pose flwShoot25Control2 = poseFactory.of(28.8269, 11.7615, 0);
@@ -75,10 +66,20 @@ public class RED_ULTRA_GREED_DETECT extends LinearOpMode {
     private final Pose flwShoot25Segment1End = poseFactory.of(57.4457, 9.0902, 181);
     private final Pose flwShoot25Segment2Start = poseFactory.of(57.4457, 9.0902, -179);
     private final Pose flwShoot25Segment2End = poseFactory.of(57.4457, 9.0902, 270);
-    private final Pose park25 = poseFactory.of(12.1133, 92.0, 99.801);
+    private final Pose park25 = poseFactory.of(12.1133, 91.7705, 101.3988);
     private final Pose park25Control1 = poseFactory.of(23.9438, 33.0912, 0);
-    private final Pose park25Segment1Start = poseFactory.of(12.1133, 102.43, 270);
-    private final Pose park25Segment1End = poseFactory.of(12.1133, 102.43, 135);
+    private final Pose park25Segment1Start = poseFactory.of(12.1133, 91.7705, 270);
+    private final Pose park25Segment1End = poseFactory.of(12.1133, 91.7705, 135);
+    private final Pose flwShoot2Start = poseFactory.of(15.5727, 46.7357, 180);
+    private final Pose flwShoot2 = poseFactory.of(64.4816, 125.5737, 86);
+    private final Pose flwShoot2Control1 = poseFactory.of(64.3683, 55.8536, 0);
+    private final Pose flwShoot2Control2 = poseFactory.of(4.9761, 118.9678, 0);
+    private final Pose flwShoot2Control3 = poseFactory.of(69.2284, 97.2965, 0);
+    private final Pose parkStart = poseFactory.of(64.4816, 125.5737, 86);
+    private final Pose park = poseFactory.of(11.6952, 88.8443, 0);
+    private final Pose parkControl1 = poseFactory.of(63.6943, 105.8647, 0);
+    private final Pose parkControl2 = poseFactory.of(36.1949, 114.9251, 0);
+    private final Pose parkControl3 = poseFactory.of(38.5427, 87.611, 0);
 
 
 
@@ -89,7 +90,7 @@ public class RED_ULTRA_GREED_DETECT extends LinearOpMode {
                 intake.stopIntakeCommand(),
                 catipult.shootCommand(),
                 waitMs(750),
-                intake.startIntakeCommand(),
+                intake.startFlowerIntakeCommand(),
                 race(
                         sequential(
                                 follow(follower, cornerIntake()),
@@ -226,7 +227,6 @@ public class RED_ULTRA_GREED_DETECT extends LinearOpMode {
 
         }
     }
-
     public Path cornerIntake() {
         return Paths.curve(startpose, cornerIntakeControl1, cornerIntake).linear(startpose, cornerIntake);
     }
@@ -256,16 +256,14 @@ public class RED_ULTRA_GREED_DETECT extends LinearOpMode {
     }
 
     public Path park25() {
-        return Paths.curve(flwShoot25, park25Control1, park25).heading(Interpolator.piecewise().until(0.5, Interpolator.linear(park25Segment1Start, park25Segment1End)).until(1, Interpolator.tangent));
+        return Paths.curve(flwShoot25, park25Control1, park25).heading(Interpolator.piecewise().until(0.2838, Interpolator.linear(park25Segment1Start, park25Segment1End)).until(1, Interpolator.tangent));
     }
-
-
     public Path flwShoot2() {
         return Paths.curve(flwShoot2Start, flwShoot2Control1, flwShoot2Control2, flwShoot2Control3, flwShoot2).linear(flwShoot2Start, flwShoot2);
     }
 
     public Path park() {
-        return Paths.curve(parkStart, parkControl1, park).linear(parkStart, park);
+        return Paths.curve(parkStart, parkControl1, parkControl2, parkControl3, park).linear(parkStart, park);
     }
 
 }

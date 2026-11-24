@@ -217,7 +217,7 @@ public class VisionSys {
                 }
 
                 // Proportional rotation
-                double rotation = -0.03 * tx;
+                double rotation = -0.04 * tx;
 
                 // Limit rotation speed
                 return Math.max(-0.5, Math.min(0.5, rotation));
@@ -243,9 +243,9 @@ public class VisionSys {
 
             if (tag.getFiducialId() == targetId) {
 
-                double tx = tag.getTargetXDegrees();
+                double tx = tag.getTargetXDegrees() - 5.0;
 
-                return Math.abs(tx) < 2.0;
+                return Math.abs(tx) < 4.0;
             }
         }
 
